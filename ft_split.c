@@ -6,11 +6,12 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/25 17:51:38 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/25 18:01:44 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/01/26 17:17:51 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+#include <stdio.h>
 
 static int		counter(char *s, char c)
 {
