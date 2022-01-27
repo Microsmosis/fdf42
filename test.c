@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/26 19:22:11 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/01/27 16:22:25 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,29 @@ typedef struct s_init_p
 	void	*mlx_ptr;
 	void	*win_ptr;
 }				t_inits;
+
+/* void	draw_end_line(void *mlx, void *win, int x, int y, int pos)
+{
+	int	y_temp;
+	int	offset1;
+	int	offset2;
+	
+	y *= pos;
+	x *= pos;
+	y_temp = y;
+	//offset1 = 400;
+	//offset2 = 365;
+	while (y > pos)
+	{
+		draw_line(mlx, win, x + offset1, y + offset1, x + offset1, y + offset2, 0xFFFFFF);
+		y -= pos;
+	}
+	while (x > pos)
+	{
+		draw_line(mlx, win, x + offset1, y_temp + offset1, x + offset2, y_temp + offset1, 0xFFFFFF);
+		x -= pos;
+	}
+} */
 
 int draw_line(void *mlx, void *win, int beginX, int beginY, int endX, int endY, int color)
 {
@@ -59,26 +82,6 @@ int		func(int keycode, t_inits *ptrs)
 	return (0);
 }
 
-char	*ft_split(char *s, char c);
-
-static char	**split(char **map)
-{
-	int		i;
-	char	*temp;
-
-	i = 0;
-	temp = ft_strnew(ft_strlen(map[i]));
-	while (map[i][0] != '\0')
-	{	
-		temp = ft_strdup(map[i]);
-		ft_strdel(&map[i]);
-		map[i] = ft_split(temp, ' ');
-		free (temp);
-		i++;
-	}
-	return (map);
-}
-
 t_rnc	row_count(int fd)
 {
 	t_rnc	value;
@@ -92,73 +95,85 @@ t_rnc	row_count(int fd)
 		value.rows++;
 		free (line);
 	}
+	value.columns = value.columns - (value.columns / 2);
 	close (fd);
 	return (value);
 }
 
-static char	**ft_read(const int fd, const int fd2)
+static char	***ft_read(const int fd, const int fd2)
 {
-	char	**map;
+	char	***map;
 	char	*line;
 	int		i;
-	int		x;
-	int		y;
+	int		j;
 	t_rnc	value;
 	
 	i = 0;
-	x = 0;
-	y = 0;
+	j = 0;
 	value = row_count(fd);
-	map = (char **)malloc(sizeof(char *) * value.rows + 1);
-	while (i <= value.rows)
-		map[i++] = ft_strnew(value.columns);
+	map = (char ***)malloc(sizeof(char **) * value.rows + 1);
+	while (i < value.rows)
+	{
+		map[i] = (char **)malloc(sizeof(char *) * value.columns + 1);
+		i++;
+	}
+	map[i] = NULL;
+	i = 0;
+	while (i < value.rows)
+	{
+		while (j < value.columns)
+		{
+			map[i][j] = ft_strnew(3);
+			j++;
+		}
+		j = 0;
+		i++;
+	}
 	i = 0;
 	while (get_next_line(fd2, &line) == 1)
 	{
-		while (line[i] != '\0')
-		{
-			map[y][x] = line[i];
-			i++;
-			x++;
-		}
-		i = 0;
-		x = 0;
-		y++;
+		map[i] = ft_strsplit(line, ' ');
+		i++;
 		free (line);
 	}
-	return (split(map));
+	return (map);
 }
 
-void	draw_corner(void *mlx, void *win, int x, int y)
+void	draw_corner(void *mlx, void *win, int x, int y, int tile_size)
 {
+	//int	offset;
+
 	x++;
 	y++;
-	x *= 35;
-	y *= 35;
-	draw_line(mlx, win, x, y, x + 35, y, 0xFFFFFF);
-	draw_line(mlx, win, x, y, x, y + 35, 0xFFFFFF);
+	x *= tile_size;
+	y *= tile_size;
+	//offset = 400;
+	draw_line(mlx, win, x, y, x + tile_size, y, 0xFFFFFF);
+	draw_line(mlx, win, x, y, x, y + tile_size, 0xFFFFFF);
 }
 
-void	draw_end_line(void *mlx, void *win, int x, int y)
+void	draw_end_line(void *mlx, void *win, int x, int y, int tile_size)
 {
 	int	y_temp;
-
-	y *= 35;
-	x *= 35;
+	//int	offset;
+	
+	y *= tile_size;
+	x *= tile_size;
 	y_temp = y;
-	while (y > 35)
+	//offset = 400;
+	while (y > tile_size)
 	{
-		draw_line(mlx, win, x, y, x, y - 35, 0xFFFFFF);
-		y -= 35;
+		draw_line(mlx, win, x, y, x, y - tile_size, 0xFFFFFF);
+		y -= tile_size;
 	}
-	while (x > 35)
+	while (x > tile_size)
 	{
-		draw_line(mlx, win, x, y_temp, x - 35, y_temp, 0xFFFFFF);
-		x -= 35;
+		draw_line(mlx, win, x, y_temp, x - tile_size, y_temp, 0xFFFFFF);
+		x -= tile_size;
 	}
 }
 
-void	draw_map(void *mlx, void *win, char **map)
+void	draw_map(void *mlx, void *win, char ***map)
 {
 	int	y;
 	int	x;
@@ -167,18 +182,18 @@ void	draw_map(void *mlx, void *win, char **map)
 	y = 0;
 	x = 0;
 	x2 = 0;
-	while (map[y][0] != '\0')
+	while (map[y] != '\0')
 	{
 		while (map[y][x] != '\0')
 		{
-			draw_corner(mlx, win, x, y);
+			draw_corner(mlx, win, x, y, 35);
 			x++;
 		}
 		x2 = x;
 		x = 0;
 		y++;
 	}
-	draw_end_line(mlx, win, ++x2, ++y);
+	draw_end_line(mlx, win, ++x2, ++y, 35);
 }
 
 int	main(int argc, char **argv)
@@ -187,7 +202,7 @@ int	main(int argc, char **argv)
 	t_inits ptrs;
 	int		fd;
 	int		fd2;
-	char	**map;
+	char	***map;
 	if (argc == 2)
 	{
 		fd = open(argv[1], O_RDONLY);
