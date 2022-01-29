@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/28 17:20:26 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/01/29 17:20:17 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,11 @@ int draw_line(void *mlx, void *win, int beginX, int beginY, int beginZ, int endX
 	return (1);
 }
 
-void	draw_end_line(void *mlx, void *win, int x, int y, int beginZ, int endZ, int height, int width, int projection)
+void	draw_end_lineY(void *mlx, void *win, int x, int y, int beginZ, int endZy, int height, int width, int projection)
 {
-	int	y_temp;
 	int	offsetX;
 	int	offsetY;
-	
+
 	offsetY = 400;
 	offsetX = 400;
 	if (projection == 1)
@@ -144,30 +143,34 @@ void	draw_end_line(void *mlx, void *win, int x, int y, int beginZ, int endZ, int
 		offsetY = -100;
 		offsetX = 900;
 	}
-	if (projection == 0)
-	{
-		x++;
-		y++;
-	}
-	y *= height;
+	x += 1;
+	y += 1;
 	x *= width;
-	y_temp = y;
+	y *= height;
 	beginZ *= height / 4;
-	endZ *= height / 4;
-	while (y >= height)
+	endZy *= height / 4;
+	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, x + offsetX, (y - height) + offsetY, endZy, projection, 0xFFFFFF);
+}
+
+void	draw_end_lineX(void *mlx, void *win, int x, int y, int beginZ, int endZx, int height, int width, int projection)
+{
+	int	offsetX;
+	int	offsetY;
+
+	offsetY = 400;
+	offsetX = 400;
+	if (projection == 1)
 	{
-		draw_line(mlx, win, x + offsetX, y + offsetY, beginZ + offsetY, x + offsetX, (y - height) + offsetY, endZ + offsetY, projection, 0xFFFFFF);
-		y -= height;
-		if (y == height && projection == 0)
-			break;
+		offsetY = -100;
+		offsetX = 900;
 	}
-	while (x >= width)
-	{
-		draw_line(mlx, win, x + offsetX, y_temp + offsetY, beginZ + offsetY, (x - width) + offsetX, y_temp + offsetY, endZ + offsetY, projection, 0xFFFFFF);
-		x -= width;
-		if (x == width && projection == 0)
-			break;
-	}
+	x += 1;
+	y += 1;
+	x *= width;
+	y *= height;
+	beginZ *= height / 4;
+	endZx *= height / 4;
+	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, (x - width) + offsetX, y + offsetY, endZx, projection, 0xFFFFFF);
 }
 
 void	draw_corner(void *mlx, void *win, int x, int y, int beginZ, int endZx, int endZy, int height, int width, int projection)
@@ -208,11 +211,11 @@ void	draw_map(void *mlx, void *win, char ***map)
 	width = 32;
 	while (map[y + 1] != '\0')
 	{
-		while (map[y][x] != '\0')
+		while (map[y][x + 1] != '\0')
 		{
-			if (map[y][x + 1] == '\0')
-				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
-			else
+			/* if (map[y][x + 1] == '\0')
+				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y + 1][x]), height, width, projection);
+			else */
 				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x + 1]), ft_atoi(map[y + 1][x]), height, width, projection);
 			x++;
 		}
@@ -220,16 +223,23 @@ void	draw_map(void *mlx, void *win, char ***map)
 		x = 0;
 		y++;
 	}
-	while (map[y] != '\0')
+	x = x2;
+	while (x2 > 0)
 	{
-		while (map[y][x] != '\0')
-		{
-			draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
-			x++;
-		}
-		y++;
+		if (x2 == 0)
+			draw_end_lineX(mlx, win, x2, y, ft_atoi(map[y][x2]), ft_atoi(map[y][x2]), height, width, projection);
+		else
+			draw_end_lineX(mlx, win, x2, y, ft_atoi(map[y][x2]), ft_atoi(map[y][x2 - 1]), height, width, projection);
+		x2--;
 	}
-	draw_end_line(mlx, win, x2, y, 0, 0, height, width, projection);
+	while (y > 0)
+	{
+		if (y == 0)
+			draw_end_lineY(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
+		else
+			draw_end_lineY(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y - 1][x]), height, width, projection);
+		y--;
+	}
 }
 
 int	main(int argc, char **argv)
