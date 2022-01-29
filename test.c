@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/27 16:22:25 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/01/28 17:20:26 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,51 +27,6 @@ typedef struct s_init_p
 	void	*mlx_ptr;
 	void	*win_ptr;
 }				t_inits;
-
-/* void	draw_end_line(void *mlx, void *win, int x, int y, int pos)
-{
-	int	y_temp;
-	int	offset1;
-	int	offset2;
-	
-	y *= pos;
-	x *= pos;
-	y_temp = y;
-	//offset1 = 400;
-	//offset2 = 365;
-	while (y > pos)
-	{
-		draw_line(mlx, win, x + offset1, y + offset1, x + offset1, y + offset2, 0xFFFFFF);
-		y -= pos;
-	}
-	while (x > pos)
-	{
-		draw_line(mlx, win, x + offset1, y_temp + offset1, x + offset2, y_temp + offset1, 0xFFFFFF);
-		x -= pos;
-	}
-} */
-
-int draw_line(void *mlx, void *win, int beginX, int beginY, int endX, int endY, int color)
-{
-	double	deltaX = endX - beginX;
-	double	deltaY = endY - beginY;
-
-	int	pixels = sqrt((deltaX * deltaX) + (deltaY * deltaY));
-
-	deltaX /= pixels;
-	deltaY /= pixels;
-
-	double pixelX = beginX;
-	double pixelY = beginY;
-	while (pixels)
-	{
-		mlx_pixel_put(mlx, win, pixelX, pixelY, color);
-		pixelX += deltaX;
-		pixelY += deltaY;
-		--pixels;
-	}
-	return (1);
-}
 
 int		func(int keycode, t_inits *ptrs)
 {
@@ -139,61 +94,142 @@ static char	***ft_read(const int fd, const int fd2)
 	return (map);
 }
 
-void	draw_corner(void *mlx, void *win, int x, int y, int tile_size)
+int draw_line(void *mlx, void *win, int beginX, int beginY, int beginZ, int endX, int endY, int endZ, int projection, int color)
 {
-	//int	offset;
+	double	deltaX = endX - beginX;
+	double	deltaY = endY - beginY;
+	double	deltaZ = endZ - beginZ;
 
-	x++;
-	y++;
-	x *= tile_size;
-	y *= tile_size;
-	//offset = 400;
-	draw_line(mlx, win, x, y, x + tile_size, y, 0xFFFFFF);
-	draw_line(mlx, win, x, y, x, y + tile_size, 0xFFFFFF);
+	int	pixels = sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+
+	deltaX /= pixels;
+	deltaY /= pixels;
+	deltaZ /= pixels;
+	
+	double pixelX = beginX;
+	double pixelY = beginY;
+	double pixelZ = beginZ;
+	double	x;
+	double	y;
+	while (pixels)
+	{
+		if (projection == 1)
+		{
+			x = (pixelX - pixelY)/sqrt(2);
+			y = (pixelX + (2 * pixelY) - pixelZ)/sqrt(6);
+			mlx_pixel_put(mlx, win, x, y, color);
+		}
+		else
+		{
+			mlx_pixel_put(mlx, win, pixelX, pixelY, color);
+		}
+		pixelX += deltaX;
+		pixelY += deltaY;
+		pixelZ += deltaZ;
+		--pixels;
+	}
+	return (1);
 }
 
-void	draw_end_line(void *mlx, void *win, int x, int y, int tile_size)
+void	draw_end_line(void *mlx, void *win, int x, int y, int beginZ, int endZ, int height, int width, int projection)
 {
 	int	y_temp;
-	//int	offset;
+	int	offsetX;
+	int	offsetY;
 	
-	y *= tile_size;
-	x *= tile_size;
+	offsetY = 400;
+	offsetX = 400;
+	if (projection == 1)
+	{
+		offsetY = -100;
+		offsetX = 900;
+	}
+	if (projection == 0)
+	{
+		x++;
+		y++;
+	}
+	y *= height;
+	x *= width;
 	y_temp = y;
-	//offset = 400;
-	while (y > tile_size)
+	beginZ *= height / 4;
+	endZ *= height / 4;
+	while (y >= height)
 	{
-		draw_line(mlx, win, x, y, x, y - tile_size, 0xFFFFFF);
-		y -= tile_size;
+		draw_line(mlx, win, x + offsetX, y + offsetY, beginZ + offsetY, x + offsetX, (y - height) + offsetY, endZ + offsetY, projection, 0xFFFFFF);
+		y -= height;
+		if (y == height && projection == 0)
+			break;
 	}
-	while (x > tile_size)
+	while (x >= width)
 	{
-		draw_line(mlx, win, x, y_temp, x - tile_size, y_temp, 0xFFFFFF);
-		x -= tile_size;
+		draw_line(mlx, win, x + offsetX, y_temp + offsetY, beginZ + offsetY, (x - width) + offsetX, y_temp + offsetY, endZ + offsetY, projection, 0xFFFFFF);
+		x -= width;
+		if (x == width && projection == 0)
+			break;
 	}
+}
+
+void	draw_corner(void *mlx, void *win, int x, int y, int beginZ, int endZx, int endZy, int height, int width, int projection)
+{
+	int	offsetX;
+	int	offsetY;
+
+	offsetY = 400;
+	offsetX = 400;
+	if (projection == 1)
+	{
+		offsetY = -100;
+		offsetX = 900;
+	}
+	x++;
+	y++;
+	x *= width;
+	y *= height;
+	beginZ *= height / 4;
+	endZx *= height / 4;
+	endZy *= height / 4;
+	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, (x + width) + offsetX, y + offsetY, endZx, projection, 0xFFFFFF);
+	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, x + offsetX, (y + height) + offsetY, endZy, projection, 0xFFFFFF);
 }
 
 void	draw_map(void *mlx, void *win, char ***map)
 {
 	int	y;
 	int	x;
-	int x2;
-	
+	int	x2;
+	int	height;
+	int	width;
+	int	projection = 1;
 	y = 0;
 	x = 0;
 	x2 = 0;
-	while (map[y] != '\0')
+	height = 32;
+	width = 32;
+	while (map[y + 1] != '\0')
 	{
 		while (map[y][x] != '\0')
 		{
-			draw_corner(mlx, win, x, y, 35);
+			if (map[y][x + 1] == '\0')
+				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
+			else
+				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x + 1]), ft_atoi(map[y + 1][x]), height, width, projection);
 			x++;
 		}
 		x2 = x;
 		x = 0;
 		y++;
 	}
-	draw_end_line(mlx, win, ++x2, ++y, 35);
+	while (map[y] != '\0')
+	{
+		while (map[y][x] != '\0')
+		{
+			draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
+			x++;
+		}
+		y++;
+	}
+	draw_end_line(mlx, win, x2, y, 0, 0, height, width, projection);
 }
 
 int	main(int argc, char **argv)
