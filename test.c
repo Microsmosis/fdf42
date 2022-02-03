@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/29 17:20:17 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/03 21:14:11 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,35 @@ typedef struct s_init_p
 	void	*win_ptr;
 }				t_inits;
 
-int		func(int keycode, t_inits *ptrs)
+typedef struct s_ints
+{
+	int	x;
+	int	x_temp;
+	int	y;
+	int	endX;
+	int	endY;
+	int	beginZ;
+	int	endZx;
+	int	endZy;
+	int	height;
+	int	width;
+	int	projection;
+}				t_ints;
+
+typedef struct s_doubles
+{
+	double	deltaX;
+	double	deltaY;
+	double	deltaZ;
+	double	pixelX;
+	double	pixelY;
+	double	pixelZ;
+	double	iso_x;
+	double	iso_y;
+	int		pixels;
+}				t_dbls;
+
+int	func(int keycode, t_inits *ptrs)
 {
 	if (keycode == 53)
 		exit (0);
@@ -37,16 +65,35 @@ int		func(int keycode, t_inits *ptrs)
 	return (0);
 }
 
+int	space_count(char *line, int i, int count)
+{
+	while (line[i] != '\0')
+	{
+		if (line[i] == ' ')
+			count++;
+		i++;
+	}
+	if (line[i - 1] == ' ')
+		exit (1); // again check memoryleaks etc with this exit ....... 
+	return (count);
+}
+
 t_rnc	row_count(int fd)
 {
 	t_rnc	value;
 	char	*line;
+	int		spaces;
 
 	value.rows = 0;
 	while (get_next_line(fd, &line) == 1)
 	{
 		if (value.rows == 0)
+		{
 			value.columns = ft_strlen(line);
+			spaces = space_count(line, 0, 0);
+		}
+		if (space_count(line, 0, 0) != spaces)
+			exit (1);
 		value.rows++;
 		free (line);
 	}
@@ -55,18 +102,11 @@ t_rnc	row_count(int fd)
 	return (value);
 }
 
-static char	***ft_read(const int fd, const int fd2)
+char	***malloc_grid(t_rnc value, int i, int j)
 {
 	char	***map;
-	char	*line;
-	int		i;
-	int		j;
-	t_rnc	value;
-	
-	i = 0;
-	j = 0;
-	value = row_count(fd);
-	map = (char ***)malloc(sizeof(char **) * value.rows + 1);
+
+	map = (char ***)malloc(sizeof(char **) * value.rows);
 	while (i < value.rows)
 	{
 		map[i] = (char **)malloc(sizeof(char *) * value.columns + 1);
@@ -78,12 +118,24 @@ static char	***ft_read(const int fd, const int fd2)
 	{
 		while (j < value.columns)
 		{
-			map[i][j] = ft_strnew(3);
+			map[i][j] = ft_strnew(2);
 			j++;
 		}
 		j = 0;
 		i++;
 	}
+	return (map);
+}
+
+static char	***ft_read(const int fd, const int fd2)
+{
+	char	***map;
+	char	*line;
+	int		i;
+	t_rnc	value;
+
+	value = row_count(fd);
+	map = malloc_grid(value, 0, 0);
 	i = 0;
 	while (get_next_line(fd2, &line) == 1)
 	{
@@ -94,151 +146,183 @@ static char	***ft_read(const int fd, const int fd2)
 	return (map);
 }
 
-int draw_line(void *mlx, void *win, int beginX, int beginY, int beginZ, int endX, int endY, int endZ, int projection, int color)
+t_dbls	initializer(t_ints I)
 {
-	double	deltaX = endX - beginX;
-	double	deltaY = endY - beginY;
-	double	deltaZ = endZ - beginZ;
+	t_dbls	D;
 
-	int	pixels = sqrt((deltaX * deltaX) + (deltaY * deltaY) + (deltaZ * deltaZ));
+	D.deltaX = I.endX - I.x;
+	D.deltaY = I.endY - I.y;
+	if (I.y == I.endY)
+		D.deltaZ = I.endZx - I.beginZ;
+	else
+		D.deltaZ = I.endZy - I.beginZ;
+	D.pixels = sqrt((D.deltaX * D.deltaX)
+			+ (D.deltaY * D.deltaY) + (D.deltaZ * D.deltaZ));
+	D.deltaX /= D.pixels;
+	D.deltaY /= D.pixels;
+	D.deltaZ /= D.pixels;
+	D.pixelX = I.x;
+	D.pixelY = I.y;
+	D.pixelZ = I.beginZ;
+	return (D);
+}
 
-	deltaX /= pixels;
-	deltaY /= pixels;
-	deltaZ /= pixels;
-	
-	double pixelX = beginX;
-	double pixelY = beginY;
-	double pixelZ = beginZ;
-	double	x;
-	double	y;
-	while (pixels)
+int	draw_line(void *mlx, void *win, t_ints I, int color)
+{
+	t_dbls	D;
+
+	D = initializer(I);
+	while (D.pixels)
 	{
-		if (projection == 1)
+		if (I.projection == 1)
 		{
-			x = (pixelX - pixelY)/sqrt(2);
-			y = (pixelX + (2 * pixelY) - pixelZ)/sqrt(6);
-			mlx_pixel_put(mlx, win, x, y, color);
+			D.iso_x = (D.pixelX - D.pixelY) / sqrt(2);
+			D.iso_y = (D.pixelX + (2 * D.pixelY) - D.pixelZ) / sqrt(6);
+			mlx_pixel_put(mlx, win, D.iso_x, D.iso_y, color);
 		}
 		else
-		{
-			mlx_pixel_put(mlx, win, pixelX, pixelY, color);
-		}
-		pixelX += deltaX;
-		pixelY += deltaY;
-		pixelZ += deltaZ;
-		--pixels;
+			mlx_pixel_put(mlx, win, D.pixelX, D.pixelY, color);
+		D.pixelX += D.deltaX;
+		D.pixelY += D.deltaY;
+		D.pixelZ += D.deltaZ;
+		--D.pixels;
 	}
 	return (1);
 }
 
-void	draw_end_lineY(void *mlx, void *win, int x, int y, int beginZ, int endZy, int height, int width, int projection)
+void	draw_end_lineY(void *mlx, void *win, t_ints I)
 {
 	int	offsetX;
 	int	offsetY;
 
+	if (I.beginZ > 99 || I.endZy > 99 || I.beginZ < -99 || I.endZy < -99)
+		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (projection == 1)
+	if (I.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	x += 1;
-	y += 1;
-	x *= width;
-	y *= height;
-	beginZ *= height / 4;
-	endZy *= height / 4;
-	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, x + offsetX, (y - height) + offsetY, endZy, projection, 0xFFFFFF);
+	I.x += 1;
+	I.y += 1;
+	I.x = (I.x * I.width) + offsetX;
+	I.y = (I.y * I.height) + offsetY;
+	I.endX = I.x;
+	I.endY = I.y - I.height;
+	I.beginZ *= I.height / 2;
+	I.endZy *= I.height / 2;
+	draw_line(mlx, win, I, 0xFFFFFF);
 }
 
-void	draw_end_lineX(void *mlx, void *win, int x, int y, int beginZ, int endZx, int height, int width, int projection)
+void	draw_end_lineX(void *mlx, void *win, t_ints I)
 {
 	int	offsetX;
 	int	offsetY;
 
+	if (I.beginZ > 99 || I.endZx > 99 || I.beginZ < -99 || I.endZx < -99)
+		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (projection == 1)
+	if (I.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	x += 1;
-	y += 1;
-	x *= width;
-	y *= height;
-	beginZ *= height / 4;
-	endZx *= height / 4;
-	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, (x - width) + offsetX, y + offsetY, endZx, projection, 0xFFFFFF);
+	I.x += 1;
+	I.y += 1;
+	I.x = (I.x * I.width) + offsetX;
+	I.y = (I.y * I.height) + offsetY;
+	I.endX = I.x - I.width;
+	I.endY = I.y;
+	I.beginZ *= I.height / 2;
+	I.endZx *= I.height / 2;
+	draw_line(mlx, win, I, 0xFFFFFF);
 }
 
-void	draw_corner(void *mlx, void *win, int x, int y, int beginZ, int endZx, int endZy, int height, int width, int projection)
+void	draw_corner(void *mlx, void *win, t_ints I)
 {
 	int	offsetX;
 	int	offsetY;
 
+	if (I.beginZ > 99 || I.endZx > 99 || I.endZy > 99
+		|| I.beginZ < -99 || I.endZx < -99 || I.endZy < -99)
+		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (projection == 1)
+	if (I.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	x++;
-	y++;
-	x *= width;
-	y *= height;
-	beginZ *= height / 4;
-	endZx *= height / 4;
-	endZy *= height / 4;
-	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, (x + width) + offsetX, y + offsetY, endZx, projection, 0xFFFFFF);
-	draw_line(mlx, win, x + offsetX, y + offsetY, beginZ, x + offsetX, (y + height) + offsetY, endZy, projection, 0xFFFFFF);
+	I.x++;
+	I.y++;
+	I.x = (I.x * I.width) + offsetX;
+	I.y = (I.y * I.height) + offsetY;
+	I.endX = I.x + I.width;
+	I.endY = I.y;
+	I.beginZ *= I.height / 2;
+	I.endZx *= I.height / 2;
+	I.endZy *= I.height / 2;
+	draw_line(mlx, win, I, 0xFFFFFF);
+	I.endX -= I.width;
+	I.endY = I.y + I.height;
+	draw_line(mlx, win, I, 0xFFFFFF);
+}
+
+t_ints	values(t_ints I, char ***map, int x_value, int y_value)
+{
+	I.beginZ = ft_atoi(map[I.y][I.x]);
+	I.endZx = ft_atoi(map[I.y][I.x + x_value]);
+	I.endZy = ft_atoi(map[I.y + y_value][I.x]);
+	return (I);
 }
 
 void	draw_map(void *mlx, void *win, char ***map)
 {
-	int	y;
-	int	x;
-	int	x2;
-	int	height;
-	int	width;
-	int	projection = 1;
-	y = 0;
-	x = 0;
-	x2 = 0;
-	height = 32;
-	width = 32;
-	while (map[y + 1] != '\0')
+	t_ints	I;
+
+	I.projection = 1;
+	I.y = 0;
+	I.x = 0;
+	I.x_temp = 0;
+	I.height = 4;
+	I.width = 4;
+	while (map[I.y + 1] != '\0')
 	{
-		while (map[y][x + 1] != '\0')
+		while (map[I.y][I.x + 1] != '\0')
 		{
-			/* if (map[y][x + 1] == '\0')
-				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), ft_atoi(map[y + 1][x]), height, width, projection);
-			else */
-				draw_corner(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x + 1]), ft_atoi(map[y + 1][x]), height, width, projection);
-			x++;
+			I = values(I, map, 1, 1);
+			draw_corner(mlx, win, I);
+			I.x++;
 		}
-		x2 = x;
-		x = 0;
-		y++;
+		I.x_temp = I.x;
+		I.x = 0;
+		I.y++;
 	}
-	x = x2;
-	while (x2 > 0)
+	I.x = I.x_temp;
+	while (I.x > 0)
 	{
-		if (x2 == 0)
-			draw_end_lineX(mlx, win, x2, y, ft_atoi(map[y][x2]), ft_atoi(map[y][x2]), height, width, projection);
+		if (I.x == 0)
+			draw_end_lineX(mlx, win, I);
 		else
-			draw_end_lineX(mlx, win, x2, y, ft_atoi(map[y][x2]), ft_atoi(map[y][x2 - 1]), height, width, projection);
-		x2--;
+		{
+			I = values(I, map, -1, 0);
+			draw_end_lineX(mlx, win, I);
+		}
+		I.x--;
 	}
-	while (y > 0)
+	I.x = I.x_temp;
+	while (I.y > 0)
 	{
-		if (y == 0)
-			draw_end_lineY(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y][x]), height, width, projection);
+		if (I.y == 0)
+			draw_end_lineY(mlx, win, I);
 		else
-			draw_end_lineY(mlx, win, x, y, ft_atoi(map[y][x]), ft_atoi(map[y - 1][x]), height, width, projection);
-		y--;
+		{
+			I = values(I, map, 0, -1);
+			draw_end_lineY(mlx, win, I);
+		}
+		I.y--;
 	}
 }
 
