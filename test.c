@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/04 12:25:25 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 13:28:32 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,26 @@ typedef struct s_doubles
 int	func(int keycode, t_inits *ptrs)
 {
 	if (keycode == 53)
-		exit (0);
+		exit (0); // memory leaks ???? 
 	if (keycode == 49)
 		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
+	/* if (keycode == 24)
+	{
+		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
+		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, map, ++size);
+	}
+	if (keycode == 27)
+	{
+		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
+		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, map, --size);
+	} */
+	return (0);
+}
+
+int	func1(int keycode, t_inits *ptrs)
+{
+	ptrs = NULL;
+	ft_putnbr(keycode);
 	return (0);
 }
 
@@ -97,6 +114,7 @@ t_rnc	row_count(int fd)
 		value.rows++;
 		free (line);
 	}
+	free (line);
 	value.columns = value.columns - (value.columns / 2);
 	close (fd);
 	return (value);
@@ -337,7 +355,7 @@ t_ints	call_corner(void *mlx, void *win, char ***map, t_ints i_s)
 	return (i_s);
 }
 
-void	draw_map(void *mlx, void *win, char ***map)
+void	draw_map(void *mlx, void *win, char ***map, int size)
 {
 	t_ints	i_s;
 
@@ -345,8 +363,8 @@ void	draw_map(void *mlx, void *win, char ***map)
 	i_s.y = 0;
 	i_s.x = 0;
 	i_s.x_temp = 0;
-	i_s.height = 24;
-	i_s.width = 24;
+	i_s.height = size;
+	i_s.width = size;
 	i_s = call_corner(mlx, win, map, i_s);
 	i_s = call_end_linex(mlx, win, map, i_s);
 	i_s = call_end_liney(mlx, win, map, i_s);
@@ -356,6 +374,7 @@ int	main(int argc, char **argv)
 {
 	int		fd;
 	int		fd2;
+	int		size = 24;
 	char	***map;
 	t_inits	ptrs;
 	if (argc == 2)
@@ -378,7 +397,7 @@ int	main(int argc, char **argv)
 	}
 	ptrs.mlx_ptr = mlx_init();
 	ptrs.win_ptr = mlx_new_window(ptrs.mlx_ptr, 1720, 1240, "mlx hive");
-	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, map);
+	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, map, size);
 	mlx_key_hook(ptrs.win_ptr, &func, &ptrs);
 	mlx_loop(ptrs.mlx_ptr);
 	return (0);
