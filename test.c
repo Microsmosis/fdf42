@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/03 21:14:11 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 12:25:25 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ typedef struct s_ints
 	int	x;
 	int	x_temp;
 	int	y;
-	int	endX;
-	int	endY;
-	int	beginZ;
-	int	endZx;
-	int	endZy;
+	int	endx;
+	int	endy;
+	int	beginz;
+	int	endzx;
+	int	endzy;
 	int	height;
 	int	width;
 	int	projection;
@@ -45,12 +45,12 @@ typedef struct s_ints
 
 typedef struct s_doubles
 {
-	double	deltaX;
-	double	deltaY;
-	double	deltaZ;
-	double	pixelX;
-	double	pixelY;
-	double	pixelZ;
+	double	deltax;
+	double	deltay;
+	double	deltaz;
+	double	pixelx;
+	double	pixely;
+	double	pixelz;
 	double	iso_x;
 	double	iso_y;
 	int		pixels;
@@ -146,193 +146,218 @@ static char	***ft_read(const int fd, const int fd2)
 	return (map);
 }
 
-t_dbls	initializer(t_ints I)
+t_dbls	initializer_doubles(t_ints i_s)
 {
-	t_dbls	D;
+	t_dbls	d_s;
 
-	D.deltaX = I.endX - I.x;
-	D.deltaY = I.endY - I.y;
-	if (I.y == I.endY)
-		D.deltaZ = I.endZx - I.beginZ;
+	d_s.deltax = i_s.endx - i_s.x;
+	d_s.deltay = i_s.endy - i_s.y;
+	if (i_s.y == i_s.endy)
+		d_s.deltaz = i_s.endzx - i_s.beginz;
 	else
-		D.deltaZ = I.endZy - I.beginZ;
-	D.pixels = sqrt((D.deltaX * D.deltaX)
-			+ (D.deltaY * D.deltaY) + (D.deltaZ * D.deltaZ));
-	D.deltaX /= D.pixels;
-	D.deltaY /= D.pixels;
-	D.deltaZ /= D.pixels;
-	D.pixelX = I.x;
-	D.pixelY = I.y;
-	D.pixelZ = I.beginZ;
-	return (D);
+		d_s.deltaz = i_s.endzy - i_s.beginz;
+	d_s.pixels = sqrt((d_s.deltax * d_s.deltax)
+			+ (d_s.deltay * d_s.deltay) + (d_s.deltaz * d_s.deltaz));
+	d_s.deltax /= d_s.pixels;
+	d_s.deltay /= d_s.pixels;
+	d_s.deltaz /= d_s.pixels;
+	d_s.pixelx = i_s.x;
+	d_s.pixely = i_s.y;
+	d_s.pixelz = i_s.beginz;
+	return (d_s);
 }
 
-int	draw_line(void *mlx, void *win, t_ints I, int color)
+int	draw_line(void *mlx, void *win, t_ints i_s, int color)
 {
-	t_dbls	D;
+	t_dbls	d_s;
 
-	D = initializer(I);
-	while (D.pixels)
+	d_s = initializer_doubles(i_s);
+	while (d_s.pixels)
 	{
-		if (I.projection == 1)
+		if (i_s.projection == 1)
 		{
-			D.iso_x = (D.pixelX - D.pixelY) / sqrt(2);
-			D.iso_y = (D.pixelX + (2 * D.pixelY) - D.pixelZ) / sqrt(6);
-			mlx_pixel_put(mlx, win, D.iso_x, D.iso_y, color);
+			d_s.iso_x = (d_s.pixelx - d_s.pixely) / sqrt(2);
+			d_s.iso_y = (d_s.pixelx + (2 * d_s.pixely) - d_s.pixelz) / sqrt(6);
+			mlx_pixel_put(mlx, win, d_s.iso_x, d_s.iso_y, color);
 		}
 		else
-			mlx_pixel_put(mlx, win, D.pixelX, D.pixelY, color);
-		D.pixelX += D.deltaX;
-		D.pixelY += D.deltaY;
-		D.pixelZ += D.deltaZ;
-		--D.pixels;
+			mlx_pixel_put(mlx, win, d_s.pixelx, d_s.pixely, color);
+		d_s.pixelx += d_s.deltax;
+		d_s.pixely += d_s.deltay;
+		d_s.pixelz += d_s.deltaz;
+		--d_s.pixels;
 	}
 	return (1);
 }
 
-void	draw_end_lineY(void *mlx, void *win, t_ints I)
+t_ints	initializer_ints(t_ints i_s, int offsetX, int offsetY)
+{
+	i_s.x++;
+	i_s.y++;
+	i_s.x = (i_s.x * i_s.width) + offsetX;
+	i_s.y = (i_s.y * i_s.height) + offsetY;
+	i_s.endx = i_s.x + i_s.width;
+	i_s.endy = i_s.y;
+	i_s.beginz *= i_s.height / 2;
+	i_s.endzx *= i_s.height / 2;
+	i_s.endzy *= i_s.height / 2;
+	return (i_s);
+}
+
+void	draw_end_liney(void *mlx, void *win, t_ints i_s)
 {
 	int	offsetX;
 	int	offsetY;
 
-	if (I.beginZ > 99 || I.endZy > 99 || I.beginZ < -99 || I.endZy < -99)
+	if (i_s.beginz > 99 || i_s.endzy > 99
+		|| i_s.beginz < -99 || i_s.endzy < -99)
 		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (I.projection == 1)
+	if (i_s.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	I.x += 1;
-	I.y += 1;
-	I.x = (I.x * I.width) + offsetX;
-	I.y = (I.y * I.height) + offsetY;
-	I.endX = I.x;
-	I.endY = I.y - I.height;
-	I.beginZ *= I.height / 2;
-	I.endZy *= I.height / 2;
-	draw_line(mlx, win, I, 0xFFFFFF);
+	i_s.x++;
+	i_s.y++;
+	i_s.x = (i_s.x * i_s.width) + offsetX;
+	i_s.y = (i_s.y * i_s.height) + offsetY;
+	i_s.endx = i_s.x;
+	i_s.endy = i_s.y - i_s.height;
+	i_s.beginz *= i_s.height / 2;
+	i_s.endzy *= i_s.height / 2;
+	draw_line(mlx, win, i_s, 0xFFFFFF);
 }
 
-void	draw_end_lineX(void *mlx, void *win, t_ints I)
+void	draw_end_linex(void *mlx, void *win, t_ints i_s)
 {
 	int	offsetX;
 	int	offsetY;
 
-	if (I.beginZ > 99 || I.endZx > 99 || I.beginZ < -99 || I.endZx < -99)
+	if (i_s.beginz > 99 || i_s.endzx > 99
+		|| i_s.beginz < -99 || i_s.endzx < -99)
 		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (I.projection == 1)
+	if (i_s.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	I.x += 1;
-	I.y += 1;
-	I.x = (I.x * I.width) + offsetX;
-	I.y = (I.y * I.height) + offsetY;
-	I.endX = I.x - I.width;
-	I.endY = I.y;
-	I.beginZ *= I.height / 2;
-	I.endZx *= I.height / 2;
-	draw_line(mlx, win, I, 0xFFFFFF);
+	i_s.x++;
+	i_s.y++;
+	i_s.x = (i_s.x * i_s.width) + offsetX;
+	i_s.y = (i_s.y * i_s.height) + offsetY;
+	i_s.endx = i_s.x - i_s.width;
+	i_s.endy = i_s.y;
+	i_s.beginz *= i_s.height / 2;
+	i_s.endzx *= i_s.height / 2;
+	draw_line(mlx, win, i_s, 0xFFFFFF);
 }
 
-void	draw_corner(void *mlx, void *win, t_ints I)
+void	draw_corner(void *mlx, void *win, t_ints i_s)
 {
 	int	offsetX;
 	int	offsetY;
 
-	if (I.beginZ > 99 || I.endZx > 99 || I.endZy > 99
-		|| I.beginZ < -99 || I.endZx < -99 || I.endZy < -99)
+	if (i_s.beginz > 99 || i_s.endzx > 99 || i_s.endzy > 99
+		|| i_s.beginz < -99 || i_s.endzx < -99 || i_s.endzy < -99)
 		exit (1); // maybe have to add some memory freeing before this ?????????
 	offsetY = 400;
 	offsetX = 400;
-	if (I.projection == 1)
+	if (i_s.projection == 1)
 	{
 		offsetY = -100;
 		offsetX = 900;
 	}
-	I.x++;
-	I.y++;
-	I.x = (I.x * I.width) + offsetX;
-	I.y = (I.y * I.height) + offsetY;
-	I.endX = I.x + I.width;
-	I.endY = I.y;
-	I.beginZ *= I.height / 2;
-	I.endZx *= I.height / 2;
-	I.endZy *= I.height / 2;
-	draw_line(mlx, win, I, 0xFFFFFF);
-	I.endX -= I.width;
-	I.endY = I.y + I.height;
-	draw_line(mlx, win, I, 0xFFFFFF);
+	i_s = initializer_ints(i_s, offsetX, offsetY);
+	draw_line(mlx, win, i_s, 0xFFFFFF);
+	i_s.endx -= i_s.width;
+	i_s.endy = i_s.y + i_s.height;
+	draw_line(mlx, win, i_s, 0xFFFFFF);
 }
 
-t_ints	values(t_ints I, char ***map, int x_value, int y_value)
+t_ints	values(t_ints i_s, char ***map, int x_value, int y_value)
 {
-	I.beginZ = ft_atoi(map[I.y][I.x]);
-	I.endZx = ft_atoi(map[I.y][I.x + x_value]);
-	I.endZy = ft_atoi(map[I.y + y_value][I.x]);
-	return (I);
+	i_s.beginz = ft_atoi(map[i_s.y][i_s.x]);
+	i_s.endzx = ft_atoi(map[i_s.y][i_s.x + x_value]);
+	i_s.endzy = ft_atoi(map[i_s.y + y_value][i_s.x]);
+	return (i_s);
+}
+
+t_ints	call_end_liney(void *mlx, void *win, char ***map, t_ints i_s)
+{
+	while (i_s.y > 0)
+	{
+		if (i_s.y == 0)
+			draw_end_liney(mlx, win, i_s);
+		else
+		{
+			i_s = values(i_s, map, 0, -1);
+			draw_end_liney(mlx, win, i_s);
+		}
+		i_s.y--;
+	}
+	return (i_s);
+}
+
+t_ints	call_end_linex(void *mlx, void *win, char ***map, t_ints i_s)
+{
+	while (i_s.x > 0)
+	{
+		if (i_s.x == 0)
+			draw_end_linex(mlx, win, i_s);
+		else
+		{
+			i_s = values(i_s, map, -1, 0);
+			draw_end_linex(mlx, win, i_s);
+		}
+		i_s.x--;
+	}
+	i_s.x = i_s.x_temp;
+	return (i_s);
+}
+
+t_ints	call_corner(void *mlx, void *win, char ***map, t_ints i_s)
+{
+	while (map[i_s.y + 1] != '\0')
+	{
+		while (map[i_s.y][i_s.x + 1] != '\0')
+		{
+			i_s = values(i_s, map, 1, 1);
+			draw_corner(mlx, win, i_s);
+			i_s.x++;
+		}
+		i_s.x_temp = i_s.x;
+		i_s.x = 0;
+		i_s.y++;
+	}
+	i_s.x = i_s.x_temp;
+	return (i_s);
 }
 
 void	draw_map(void *mlx, void *win, char ***map)
 {
-	t_ints	I;
+	t_ints	i_s;
 
-	I.projection = 1;
-	I.y = 0;
-	I.x = 0;
-	I.x_temp = 0;
-	I.height = 4;
-	I.width = 4;
-	while (map[I.y + 1] != '\0')
-	{
-		while (map[I.y][I.x + 1] != '\0')
-		{
-			I = values(I, map, 1, 1);
-			draw_corner(mlx, win, I);
-			I.x++;
-		}
-		I.x_temp = I.x;
-		I.x = 0;
-		I.y++;
-	}
-	I.x = I.x_temp;
-	while (I.x > 0)
-	{
-		if (I.x == 0)
-			draw_end_lineX(mlx, win, I);
-		else
-		{
-			I = values(I, map, -1, 0);
-			draw_end_lineX(mlx, win, I);
-		}
-		I.x--;
-	}
-	I.x = I.x_temp;
-	while (I.y > 0)
-	{
-		if (I.y == 0)
-			draw_end_lineY(mlx, win, I);
-		else
-		{
-			I = values(I, map, 0, -1);
-			draw_end_lineY(mlx, win, I);
-		}
-		I.y--;
-	}
+	i_s.projection = 1;
+	i_s.y = 0;
+	i_s.x = 0;
+	i_s.x_temp = 0;
+	i_s.height = 24;
+	i_s.width = 24;
+	i_s = call_corner(mlx, win, map, i_s);
+	i_s = call_end_linex(mlx, win, map, i_s);
+	i_s = call_end_liney(mlx, win, map, i_s);
 }
 
 int	main(int argc, char **argv)
 {
-	
-	t_inits ptrs;
 	int		fd;
 	int		fd2;
 	char	***map;
+	t_inits	ptrs;
 	if (argc == 2)
 	{
 		fd = open(argv[1], O_RDONLY);
