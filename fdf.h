@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/04 16:43:05 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 17:58:29 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,25 @@ typedef struct s_init_p
 	int		size;
 	int		fd2;
 	int		fd;
+	int		x;
+	int		x_temp;
+	int		y;
+	int		endx;
+	int		endy;
+	int		beginz;
+	int		endzx;
+	int		endzy;
+	int		height;
+	int		width;
+	int		projection;
+	int		color;
+	int		rot1;
+	int		rot2;
+	int		offsetx;
+	int		offsety;
 }				t_inits;
 
-typedef struct s_ints
+/* typedef struct s_ints
 {
 	int	x;
 	int	x_temp;
@@ -47,7 +63,7 @@ typedef struct s_ints
 	int	height;
 	int	width;
 	int	projection;
-}				t_ints;
+}				t_ints; */
 
 typedef struct s_doubles
 {
