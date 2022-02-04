@@ -6,35 +6,18 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/04 16:14:31 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 17:06:51 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-int	func(int keycode, t_inits *ptrs)
-{
-	if (keycode == 53)
-		exit (0);
-	if (keycode == 49)
-		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
-	/* if (keycode == 24)
-	{
-		zoom in
-	}
-	if (keycode == 27)
-	{
-		zoom out
-	} */
-	return (0);
-}
-
-int	func1(int keycode, t_inits *ptrs)
+/* int	func1(int keycode, t_inits *ptrs)
 {
 	ptrs = NULL;
 	ft_putnbr(keycode);
 	return (0);
-}
+} */
 
 t_rnc	row_count(int fd)
 {
@@ -327,34 +310,32 @@ void	draw_map(void *mlx, void *win, char ***map, int size)
 
 int	main(int argc, char **argv)
 {
-	int		fd;
-	int		fd2;
-	int		size = 24;
-	char	***map;
 	t_inits	ptrs;
+	
+	ptrs.size = 24;
 	if (argc == 2)
 	{
-		fd = open(argv[1], O_RDONLY);
-		fd2 = open(argv[1], O_RDONLY);
+		ptrs.fd = open(argv[1], O_RDONLY);
+		ptrs.fd2 = open(argv[1], O_RDONLY);
 	}
 	else
 	{
 		ft_putstr("	usage :		./a.out <filename.>\n");
 		exit (1);
 	}
-	if (fd == -1 || fd2 == -1)
+	if (ptrs.fd == -1 || ptrs.fd2 == -1)
 		exit (1);
-	map = ft_read(fd, fd2);
-	close (fd);
-	close (fd2);
-	if (map == NULL)
+	ptrs.map = ft_read(ptrs.fd, ptrs.fd2);
+	close (ptrs.fd);
+	close (ptrs.fd2);
+	if (ptrs.map == NULL)
 	{
 		ft_putstr("error\n");
 		exit (1);
 	}
 	ptrs.mlx_ptr = mlx_init();
 	ptrs.win_ptr = mlx_new_window(ptrs.mlx_ptr, 1720, 1240, "mlx hive");
-	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, map, size);
+	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, ptrs.map, ptrs.size);
 	mlx_key_hook(ptrs.win_ptr, &func, &ptrs);
 	mlx_loop(ptrs.mlx_ptr);
 	exit (0);

@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/04 14:59:49 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 16:43:05 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,10 @@ typedef struct s_init_p
 {
 	void	*mlx_ptr;
 	void	*win_ptr;
+	char	***map;
+	int		size;
+	int		fd2;
+	int		fd;
 }				t_inits;
 
 typedef struct s_ints
@@ -57,5 +61,7 @@ typedef struct s_doubles
 	double	iso_y;
 	int		pixels;
 }				t_dbls;
+
+int	func(int keycode, t_inits *ptrs);
 
 #endif
