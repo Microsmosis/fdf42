@@ -6,14 +6,14 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/02 12:42:20 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/24 16:35:04 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 14:54:19 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# include "../libft/libft.h"
+# include "libft.h"
 
 # define BUFF_SIZE 1
 # define FD_SIZE 8192

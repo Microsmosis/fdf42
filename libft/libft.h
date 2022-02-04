@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/02 11:56:20 by llonnrot          #+#    #+#             */
-/*   Updated: 2021/12/11 14:31:37 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 14:51:42 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,4 +83,5 @@ void	ft_lstadd(t_list **alst, t_list *new);
 void	ft_lstiter(t_list *lst, void (*f)(t_list *elem));
 t_list	*ft_lstmap(t_list *lst, t_list *(*f)(t_list *elem));
 size_t	ft_count_c(char *s, int c);
+int		get_next_line(const int fd, char **line);
 #endif

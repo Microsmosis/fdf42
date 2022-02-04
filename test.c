@@ -6,71 +6,25 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/21 14:33:58 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/04 13:28:32 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/04 16:14:31 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <math.h>
-#include <fcntl.h>
-#include <stdio.h>
-#include "mlx.h"
-#include "get_next_line.h"
-
-typedef struct s_rnc
-{
-	int	rows;
-	int	columns;
-}				t_rnc;
-
-typedef struct s_init_p
-{
-	void	*mlx_ptr;
-	void	*win_ptr;
-}				t_inits;
-
-typedef struct s_ints
-{
-	int	x;
-	int	x_temp;
-	int	y;
-	int	endx;
-	int	endy;
-	int	beginz;
-	int	endzx;
-	int	endzy;
-	int	height;
-	int	width;
-	int	projection;
-}				t_ints;
-
-typedef struct s_doubles
-{
-	double	deltax;
-	double	deltay;
-	double	deltaz;
-	double	pixelx;
-	double	pixely;
-	double	pixelz;
-	double	iso_x;
-	double	iso_y;
-	int		pixels;
-}				t_dbls;
+#include "fdf.h"
 
 int	func(int keycode, t_inits *ptrs)
 {
 	if (keycode == 53)
-		exit (0); // memory leaks ???? 
+		exit (0);
 	if (keycode == 49)
 		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
 	/* if (keycode == 24)
 	{
-		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
-		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, map, ++size);
+		zoom in
 	}
 	if (keycode == 27)
 	{
-		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
-		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, map, --size);
+		zoom out
 	} */
 	return (0);
 }
@@ -82,24 +36,10 @@ int	func1(int keycode, t_inits *ptrs)
 	return (0);
 }
 
-int	space_count(char *line, int i, int count)
-{
-	while (line[i] != '\0')
-	{
-		if (line[i] == ' ')
-			count++;
-		i++;
-	}
-	if (line[i - 1] == ' ')
-		exit (1); // again check memoryleaks etc with this exit ....... 
-	return (count);
-}
-
 t_rnc	row_count(int fd)
 {
 	t_rnc	value;
 	char	*line;
-	int		spaces;
 
 	value.rows = 0;
 	while (get_next_line(fd, &line) == 1)
@@ -107,10 +47,7 @@ t_rnc	row_count(int fd)
 		if (value.rows == 0)
 		{
 			value.columns = ft_strlen(line);
-			spaces = space_count(line, 0, 0);
 		}
-		if (space_count(line, 0, 0) != spaces)
-			exit (1);
 		value.rows++;
 		free (line);
 	}
@@ -145,6 +82,23 @@ char	***malloc_grid(t_rnc value, int i, int j)
 	return (map);
 }
 
+void	valid_map(char ***map, int i, int j, int count)
+{
+	while (map[i] != '\0')
+	{
+		while (map[i][j] != '\0')
+		{
+			j++;
+		}
+		if (i == 0)
+			count = j;
+		if (i > 0 && j != count)
+			exit (1);
+		j = 0;
+		i++;
+	}
+}
+
 static char	***ft_read(const int fd, const int fd2)
 {
 	char	***map;
@@ -161,6 +115,7 @@ static char	***ft_read(const int fd, const int fd2)
 		i++;
 		free (line);
 	}
+	valid_map(map, 0, 0, 0);
 	return (map);
 }
 
@@ -229,7 +184,7 @@ void	draw_end_liney(void *mlx, void *win, t_ints i_s)
 
 	if (i_s.beginz > 99 || i_s.endzy > 99
 		|| i_s.beginz < -99 || i_s.endzy < -99)
-		exit (1); // maybe have to add some memory freeing before this ?????????
+		exit (1);
 	offsetY = 400;
 	offsetX = 400;
 	if (i_s.projection == 1)
@@ -255,7 +210,7 @@ void	draw_end_linex(void *mlx, void *win, t_ints i_s)
 
 	if (i_s.beginz > 99 || i_s.endzx > 99
 		|| i_s.beginz < -99 || i_s.endzx < -99)
-		exit (1); // maybe have to add some memory freeing before this ?????????
+		exit (1);
 	offsetY = 400;
 	offsetX = 400;
 	if (i_s.projection == 1)
@@ -281,7 +236,7 @@ void	draw_corner(void *mlx, void *win, t_ints i_s)
 
 	if (i_s.beginz > 99 || i_s.endzx > 99 || i_s.endzy > 99
 		|| i_s.beginz < -99 || i_s.endzx < -99 || i_s.endzy < -99)
-		exit (1); // maybe have to add some memory freeing before this ?????????
+		exit (1);
 	offsetY = 400;
 	offsetX = 400;
 	if (i_s.projection == 1)
@@ -385,20 +340,22 @@ int	main(int argc, char **argv)
 	else
 	{
 		ft_putstr("	usage :		./a.out <filename.>\n");
-		return (1);
+		exit (1);
 	}
+	if (fd == -1 || fd2 == -1)
+		exit (1);
 	map = ft_read(fd, fd2);
 	close (fd);
 	close (fd2);
 	if (map == NULL)
 	{
-		printf("error\n");
-		return (1);
+		ft_putstr("error\n");
+		exit (1);
 	}
 	ptrs.mlx_ptr = mlx_init();
 	ptrs.win_ptr = mlx_new_window(ptrs.mlx_ptr, 1720, 1240, "mlx hive");
 	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, map, size);
 	mlx_key_hook(ptrs.win_ptr, &func, &ptrs);
 	mlx_loop(ptrs.mlx_ptr);
-	return (0);
+	exit (0);
 }
