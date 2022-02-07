@@ -6,22 +6,32 @@
 #    By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/21 14:48:45 by llonnrot          #+#    #+#              #
-#    Updated: 2022/02/04 16:43:19 by llonnrot         ###   ########.fr        #
+#    Updated: 2022/02/07 10:49:05 by llonnrot         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
-SOURCES = test.c func.c libft/libft.a
+SOURCES = main.c tools.c init.c draw_01.c draw_02.c func.c
 
 FLAGS = -Wextra -Werror -Wall
 
-INCLUDES = fdf.h
+LIBFT = -L libft -lft
 
 all: $(NAME)
 
 $(NAME):
-	gcc $(SOURCES) -I $(INCLUDES) -o $(NAME) $(FLAGS) -L. -lmlx -framework OpenGL -framework Appkit
+	@echo "Compiling..."
+	@make -C libft
+	@gcc $(FLAGS) $(SOURCES) -o $(NAME) -I libft $(LIBFT) -L. -lmlx -framework OpenGL -framework Appkit
 
-fclean: 
-	rm $(NAME)
+clean:
+	@echo "Cleaning object files..."
+	@make -C libft clean
+
+fclean: clean
+	@echo "Cleaning binary..."
+	@make -C libft fclean
+	@rm $(NAME)
+
+re: fclean all
