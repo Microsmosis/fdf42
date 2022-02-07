@@ -6,13 +6,13 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:14:23 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 10:50:15 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/07 16:42:27 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-void	draw_map(void *mlx, void *win, t_inits ptrs)
+t_inits	draw_map(void *mlx, void *win, t_inits ptrs)
 {
 	ptrs.y = 0;
 	ptrs.x = 0;
@@ -22,6 +22,7 @@ void	draw_map(void *mlx, void *win, t_inits ptrs)
 	ptrs = call_corner(mlx, win, ptrs);
 	ptrs = call_end_linex(mlx, win, ptrs);
 	ptrs = call_end_liney(mlx, win, ptrs);
+	return (ptrs);
 }
 
 t_inits	call_corner(void *mlx, void *win, t_inits ptrs)

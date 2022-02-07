@@ -6,55 +6,52 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:20:01 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 10:22:50 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/07 16:47:35 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-char	***ft_read(const int fd, const int fd2)
+t_inits	ft_read(t_inits ptrs, const int fd, const int fd2)
 {
-	char	***map;
 	char	*line;
 	int		i;
-	t_rnc	value;
 
-	value = row_count(fd);
-	map = malloc_grid(value, 0, 0);
+	ptrs = row_count(fd, ptrs);
+	ptrs = malloc_grid(ptrs, 0, 0);
 	i = 0;
+	//free_map(ptrs); // i guess free function works because it frees everything else but not the 16 bytes;
 	while (get_next_line(fd2, &line) == 1)
 	{
-		map[i] = ft_strsplit(line, ' ');
+		ptrs.map[i] = ft_strsplit(line, ' ');
 		i++;
 		free (line);
 	}
-	valid_map(map, 0, 0, 0);
-	return (map);
+	valid_map(ptrs.map, 0, 0, 0);
+	return (ptrs);
 }
 
-char	***malloc_grid(t_rnc value, int i, int j)
+t_inits	malloc_grid(t_inits ptrs, int i, int j)
 {
-	char	***map;
-
-	map = (char ***)malloc(sizeof(char **) * value.rows);
-	while (i < value.rows)
+	ptrs.map = (char ***)malloc(sizeof(char **) * ptrs.rows + 1);
+	while (i < ptrs.rows)
 	{
-		map[i] = (char **)malloc(sizeof(char *) * value.columns + 1);
+		ptrs.map[i] = (char **)malloc(sizeof(char *) * ptrs.columns + 1);
 		i++;
 	}
-	map[i] = NULL;
+	ptrs.map[i] = NULL;
 	i = 0;
-	while (i < value.rows)
+	while (i < ptrs.rows)
 	{
-		while (j < value.columns)
+		while (j < ptrs.columns)
 		{
-			map[i][j] = ft_strnew(2);
+			ptrs.map[i][j] = ft_strnew(2);
 			j++;
 		}
 		j = 0;
 		i++;
 	}
-	return (map);
+	return (ptrs);
 }
 
 void	valid_map(char ***map, int i, int j, int count)
@@ -74,23 +71,48 @@ void	valid_map(char ***map, int i, int j, int count)
 	}
 }
 
-t_rnc	row_count(int fd)
+t_inits	row_count(int fd, t_inits ptrs)
 {
-	t_rnc	value;
 	char	*line;
 
-	value.rows = 0;
+	ptrs.rows = 0;
 	while (get_next_line(fd, &line) == 1)
 	{
-		if (value.rows == 0)
+		if (ptrs.rows == 0)
 		{
-			value.columns = ft_strlen(line);
+			ptrs.columns = ft_strlen(line);
 		}
-		value.rows++;
+		ptrs.rows++;
 		free (line);
 	}
 	free (line);
-	value.columns = value.columns - (value.columns / 2);
+	ptrs.columns = ptrs.columns - (ptrs.columns / 2);
 	close (fd);
-	return (value);
+	return (ptrs);
+}
+
+void	free_map(t_inits ptrs)
+{
+	if (ptrs.rows == 0)
+	{
+		free(ptrs.map);
+	}
+	int	temp;
+	printf("rows ; %d\n", ptrs.rows);
+	printf("columns ; %d\n", ptrs.columns);
+	ptrs.columns--;
+	ptrs.rows--;
+	temp = ptrs.columns;
+	while (ptrs.rows >= 0)
+	{
+		while (ptrs.columns >= 0)
+		{
+			free(ptrs.map[ptrs.rows][ptrs.columns]);
+			ptrs.columns--;
+		}
+		ptrs.columns = temp;
+		free(ptrs.map[ptrs.rows]);
+		ptrs.rows--;
+	}
+	//free(ptrs.map);
 }

@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 11:19:49 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/07 16:42:35 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,18 +17,19 @@
 # include <fcntl.h>
 # include "libft/libft.h"
 # include "mlx.h"
+# include <stdio.h>
 
-typedef struct s_rnc
+/* typedef struct s_rnc
 {
 	int	rows;
 	int	columns;
 }				t_rnc;
-
+ */
 typedef struct s_init_p
 {
 	void	*mlx_ptr;
 	void	*win_ptr;
-	char	***map;
+	char	***map; 
 	int		size;
 	int		fd2;
 	int		fd;
@@ -48,6 +49,8 @@ typedef struct s_init_p
 	int		rot2;
 	int		offsetx;
 	int		offsety;
+	int		rows;
+	int		columns;
 }				t_inits;
 
 typedef struct s_doubles
@@ -63,11 +66,10 @@ typedef struct s_doubles
 	int		pixels;
 }				t_dbls;
 
-int		func(int keycode, t_inits *ptrs);
-char	***ft_read(const int fd, const int fd2);
-char	***malloc_grid(t_rnc value, int i, int j);
+t_inits	ft_read(t_inits ptrs, const int fd, const int fd2);
+t_inits	malloc_grid(t_inits ptrs, int i, int j);
 void	valid_map(char ***map, int i, int j, int count);
-t_rnc	row_count(int fd);
+t_inits	row_count(int fd, t_inits ptrs);
 t_inits	values(t_inits ptrs, int x_value, int y_value);
 t_inits	initializer_ints(t_inits ptrs);
 t_dbls	initializer_doubles(t_inits ptrs);
@@ -75,12 +77,21 @@ t_inits	call_end_linex(void *mlx, void *win, t_inits ptrs);
 t_inits	call_end_liney(void *mlx, void *win, t_inits ptrs);
 void	draw_end_linex(void *mlx, void *win, t_inits ptrs);
 void	draw_end_liney(void *mlx, void *win, t_inits ptrs);
-void	draw_map(void *mlx, void *win, t_inits ptrs);
+t_inits	draw_map(void *mlx, void *win, t_inits ptrs);
 t_inits	call_corner(void *mlx, void *win, t_inits ptrs);
 void	draw_corner(void *mlx, void *win, t_inits ptrs);
 int		draw_line(void *mlx, void *win, t_inits ptrs);
 t_inits	main_init(t_inits ptrs);
 void	start_mlx(t_inits ptrs);
 void	error_exit(int i);
+void	free_map(t_inits ptrs);
+int		func(int keycode, t_inits *ptrs);
+int		func1(int keycode, t_inits *ptrs);
+int		func2(int keycode, t_inits *ptrs);
+int		func3(int keycode, t_inits *ptrs);
+int		func4(int keycode, t_inits *ptrs);
+int		func5(int keycode, t_inits *ptrs);
+int		func6(int keycode, t_inits *ptrs);
+int		func7(int keycode, t_inits *ptrs);
 
 #endif
