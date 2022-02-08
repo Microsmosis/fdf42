@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:09:25 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 16:44:07 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 18:39:48 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,11 +38,18 @@ void	error_exit(int i)
 	if (i == 0)
 	{
 		ft_putstr("	usage :		./a.out <filename.>\n");
+		system ("leaks fdf");
 		exit (1);
 	}
 	else if (i == 1)
 	{
 		ft_putstr("Error occured when opening file descriptor.\n");
+		exit (1);
+	}
+	else if (i == 2)
+	{
+		ft_putstr("Empty file.");
+		system ("leaks fdf");
 		exit (1);
 	}
 }
@@ -62,7 +69,7 @@ int	main(int argc, char **argv)
 		error_exit(0);
 	if (ptrs.fd == -1 || ptrs.fd2 == -1)
 		exit (1);
-	ptrs = ft_read(ptrs, ptrs.fd, ptrs.fd2);
+	ptrs = readnalloc(ptrs, ptrs.fd, ptrs.fd2);
 	close (ptrs.fd);
 	close (ptrs.fd2);
 	start_mlx(ptrs);

@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:15:59 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 10:29:18 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 18:30:10 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,6 @@ t_inits	call_end_liney(void *mlx, void *win, t_inits ptrs)
 
 void	draw_end_linex(void *mlx, void *win, t_inits ptrs)
 {
-	if (ptrs.beginz > 99 || ptrs.endzx > 99
-		|| ptrs.beginz < -99 || ptrs.endzx < -99)
-		exit (1);
 	ptrs.x++;
 	ptrs.y++;
 	ptrs.x = (ptrs.x * ptrs.width) + ptrs.offsetx;
@@ -63,9 +60,6 @@ void	draw_end_linex(void *mlx, void *win, t_inits ptrs)
 
 void	draw_end_liney(void *mlx, void *win, t_inits ptrs)
 {
-	if (ptrs.beginz > 99 || ptrs.endzy > 99
-		|| ptrs.beginz < -99 || ptrs.endzy < -99)
-		exit (1);
 	ptrs.x++;
 	ptrs.y++;
 	ptrs.x = (ptrs.x * ptrs.width) + ptrs.offsetx;

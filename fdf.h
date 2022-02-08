@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 16:42:35 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 18:40:31 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,6 @@
 # include "mlx.h"
 # include <stdio.h>
 
-/* typedef struct s_rnc
-{
-	int	rows;
-	int	columns;
-}				t_rnc;
- */
 typedef struct s_init_p
 {
 	void	*mlx_ptr;
@@ -66,7 +60,7 @@ typedef struct s_doubles
 	int		pixels;
 }				t_dbls;
 
-t_inits	ft_read(t_inits ptrs, const int fd, const int fd2);
+t_inits	readnalloc(t_inits ptrs, const int fd, const int fd2);
 t_inits	malloc_grid(t_inits ptrs, int i, int j);
 void	valid_map(char ***map, int i, int j, int count);
 t_inits	row_count(int fd, t_inits ptrs);
@@ -84,7 +78,7 @@ int		draw_line(void *mlx, void *win, t_inits ptrs);
 t_inits	main_init(t_inits ptrs);
 void	start_mlx(t_inits ptrs);
 void	error_exit(int i);
-void	free_map(t_inits ptrs);
+void	free_map(t_inits *ptrs);
 int		func(int keycode, t_inits *ptrs);
 int		func1(int keycode, t_inits *ptrs);
 int		func2(int keycode, t_inits *ptrs);

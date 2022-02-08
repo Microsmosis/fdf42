@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 16:42:38 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 16:46:13 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 17:19:29 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ int	func(int keycode, t_inits *ptrs)
 {
 	if (keycode == 53)
 	{
-		//free_map(*ptrs);
 		system ("leaks fdf");
 		exit (0);
 	}
