@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 21:11:43 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:57:23 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ typedef struct s_doubles
 }				t_dbls;
 
 t_inits	readnalloc(t_inits ptrs, const int fd, const int fd2);
-t_inits	malloc_grid(t_inits ptrs, int i, int j);
+t_inits	malloc_grid(t_inits ptrs, int i);
 void	valid_map(char ***map, int i, int j, int count);
 t_inits	row_count(int fd, t_inits ptrs);
 t_inits	values(t_inits ptrs, int x_value, int y_value);

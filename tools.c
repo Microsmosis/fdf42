@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:20:01 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 20:35:42 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:58:27 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_inits	readnalloc(t_inits ptrs, const int fd, const int fd2)
 	int		i;
 
 	ptrs = row_count(fd, ptrs);
-	ptrs = malloc_grid(ptrs, 0, 0);
+	ptrs = malloc_grid(ptrs, 0);
 	i = 0;
 	free_map(&ptrs);
 	while (get_next_line(fd2, &line) == 1)
@@ -32,7 +32,7 @@ t_inits	readnalloc(t_inits ptrs, const int fd, const int fd2)
 	return (ptrs);
 }
 
-t_inits	malloc_grid(t_inits ptrs, int i, int j)
+t_inits	malloc_grid(t_inits ptrs, int i)
 {
 	ptrs.map = (char ***)malloc(sizeof(char **) * (ptrs.rows + 1));
 	while (i < ptrs.rows)
@@ -41,7 +41,6 @@ t_inits	malloc_grid(t_inits ptrs, int i, int j)
 		i++;
 	}
 	ptrs.map[i] = NULL;
-	j = 0;
 	return (ptrs);
 }
 
