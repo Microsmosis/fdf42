@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:18:52 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/07 15:46:03 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 20:49:22 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,9 +28,9 @@ t_inits	initializer_ints(t_inits ptrs)
 	ptrs.y = (ptrs.y * ptrs.height) + ptrs.offsety;
 	ptrs.endx = ptrs.x + ptrs.width;
 	ptrs.endy = ptrs.y;
-	ptrs.beginz *= ptrs.height / 2;
-	ptrs.endzx *= ptrs.height / 2;
-	ptrs.endzy *= ptrs.height / 2;
+	ptrs.beginz *= ptrs.z_depth;
+	ptrs.endzx *= ptrs.z_depth;
+	ptrs.endzy *= ptrs.z_depth;
 	return (ptrs);
 }
 

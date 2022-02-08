@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:40:14 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:11:43 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ typedef struct s_init_p
 	int		beginz;
 	int		endzx;
 	int		endzy;
+	int		z_depth;
+	int		z_color;
 	int		height;
 	int		width;
 	int		projection;
@@ -81,6 +83,7 @@ void	draw_straight(void *mlx, void *win, t_inits ptrs);
 t_inits	main_init(t_inits ptrs);
 void	start_mlx(t_inits ptrs);
 void	error_exit(int i);
+void	error_exit_01(int i);
 void	free_map(t_inits *ptrs);
 int		func(int keycode, t_inits *ptrs);
 int		func1(int keycode, t_inits *ptrs);
@@ -90,5 +93,8 @@ int		func4(int keycode, t_inits *ptrs);
 int		func5(int keycode, t_inits *ptrs);
 int		func6(int keycode, t_inits *ptrs);
 int		func7(int keycode, t_inits *ptrs);
+int		func8(int keycode, t_inits *ptrs);
+int		func9(int keycode, t_inits *ptrs);
+int		func10(int keycode, t_inits *ptrs);
 
 #endif

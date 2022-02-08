@@ -6,13 +6,13 @@
 #    By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2022/01/21 14:48:45 by llonnrot          #+#    #+#              #
-#    Updated: 2022/02/07 15:25:11 by llonnrot         ###   ########.fr        #
+#    Updated: 2022/02/08 21:10:35 by llonnrot         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = fdf
 
-SOURCES = main.c tools.c init.c draw_01.c draw_02.c func_01.c func_02.c
+SOURCES = main.c tools.c init.c draw_01.c draw_02.c func_01.c func_02.c func_03.c error.c
 
 FLAGS = -Wextra -Werror -Wall
 

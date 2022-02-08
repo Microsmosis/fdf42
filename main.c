@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:09:25 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:56:46 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:24:04 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void	draw_straight(void *mlx, void *win, t_inits ptrs)
 t_inits	main_init(t_inits ptrs)
 {
 	ptrs.size = 24;
+	ptrs.z_depth = 7;
+	ptrs.z_color = 13421258;
 	ptrs.projection = 1;
 	ptrs.color = 0xFFFFFFF;
 	ptrs.rot1 = 2;
@@ -37,30 +39,6 @@ void	start_mlx(t_inits ptrs)
 	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, ptrs);
 	mlx_key_hook(ptrs.win_ptr, &func, &ptrs);
 	mlx_loop(ptrs.mlx_ptr);
-}
-
-void	error_exit(int i)
-{
-	if (i == 0)
-	{
-		ft_putstr("	usage :		./a.out <filename.>\n");
-		exit (1);
-	}
-	else if (i == 1)
-	{
-		ft_putstr("Error occured when opening file descriptor.\n");
-		exit (1);
-	}
-	else if (i == 2)
-	{
-		ft_putstr("Empty file.\n");
-		exit (1);
-	}
-	else if (i == 3)
-	{
-		ft_putstr("Invalid file. Valid file consist of rows of equal length of lines.\n");
-		exit (1);
-	}
 }
 
 int	main(int argc, char **argv)

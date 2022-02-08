@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:14:23 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:37:55 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:22:17 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,8 @@ t_inits	call_corner(void *mlx, void *win, t_inits ptrs)
 void	draw_corner(void *mlx, void *win, t_inits ptrs)
 {
 	ptrs = initializer_ints(ptrs);
+	if (ptrs.beginz > 0 || ptrs.endzx > 0 || ptrs.endzy > 0)
+		ptrs.color = ptrs.z_color;
 	draw_line(mlx, win, ptrs);
 	ptrs.endx -= ptrs.width;
 	ptrs.endy = ptrs.y + ptrs.height;

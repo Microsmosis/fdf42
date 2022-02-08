@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:20:01 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:54:47 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 20:35:42 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,22 @@ t_inits	malloc_grid(t_inits ptrs, int i, int j)
 
 void	valid_map(char ***map, int i, int j, int count)
 {
+	int	k;
+
+	k = 0;
 	while (map[i] != '\0')
 	{
 		while (map[i][j] != '\0')
 		{
+			while (map[i][j][k] != '\0')
+			{
+				if (map[i][j][k] == '-')
+				k++;
+				if (ft_isdigit(map[i][j][k]) == 0)
+					error_exit_01(0);
+				k++;
+			}
+			k = 0;
 			j++;
 		}
 		if (i == 0)

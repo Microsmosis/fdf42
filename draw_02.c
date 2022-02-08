@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:15:59 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 20:03:41 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 21:28:05 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,10 @@ void	draw_end_linex(void *mlx, void *win, t_inits ptrs)
 	ptrs.y = (ptrs.y * ptrs.height) + ptrs.offsety;
 	ptrs.endx = ptrs.x - ptrs.width;
 	ptrs.endy = ptrs.y;
-	ptrs.beginz *= ptrs.height / 2;
-	ptrs.endzx *= ptrs.height / 2;
+	ptrs.beginz *= ptrs.z_depth;
+	ptrs.endzx *= ptrs.z_depth;
+	if (ptrs.beginz > 0 || ptrs.endzx > 0 || ptrs.endzy > 0)
+		ptrs.color = ptrs.z_color;
 	draw_line(mlx, win, ptrs);
 }
 
@@ -66,8 +68,10 @@ void	draw_end_liney(void *mlx, void *win, t_inits ptrs)
 	ptrs.y = (ptrs.y * ptrs.height) + ptrs.offsety;
 	ptrs.endx = ptrs.x;
 	ptrs.endy = ptrs.y - ptrs.height;
-	ptrs.beginz *= ptrs.height / 2;
-	ptrs.endzy *= ptrs.height / 2;
+	ptrs.beginz *= ptrs.z_depth;
+	ptrs.endzy *= ptrs.z_depth;
+	if (ptrs.beginz > 0 || ptrs.endzx > 0 || ptrs.endzy > 0)
+		ptrs.color = ptrs.z_color;
 	draw_line(mlx, win, ptrs);
 }
 
