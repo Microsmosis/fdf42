@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:09:25 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:41:25 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:56:46 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ void	error_exit(int i)
 	if (i == 0)
 	{
 		ft_putstr("	usage :		./a.out <filename.>\n");
-		system ("leaks fdf");
 		exit (1);
 	}
 	else if (i == 1)
@@ -54,8 +53,12 @@ void	error_exit(int i)
 	}
 	else if (i == 2)
 	{
-		ft_putstr("Empty file.");
-		system ("leaks fdf");
+		ft_putstr("Empty file.\n");
+		exit (1);
+	}
+	else if (i == 3)
+	{
+		ft_putstr("Invalid file. Valid file consist of rows of equal length of lines.\n");
 		exit (1);
 	}
 }

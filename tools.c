@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:20:01 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 19:08:44 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:54:47 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	valid_map(char ***map, int i, int j, int count)
 		if (i == 0)
 			count = j;
 		if (i > 0 && j != count)
-			exit (1);
+			error_exit (3);
 		j = 0;
 		i++;
 	}
