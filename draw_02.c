@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:15:59 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 18:30:10 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:44:46 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,14 @@ void	draw_end_liney(void *mlx, void *win, t_inits ptrs)
 	ptrs.beginz *= ptrs.height / 2;
 	ptrs.endzy *= ptrs.height / 2;
 	draw_line(mlx, win, ptrs);
+}
+
+void	straight_line(void *mlx, void *win, t_inits ptrs)
+{
+	while (ptrs.map[ptrs.y][ptrs.x + 1] != '\0')
+	{
+		ptrs = values(ptrs, 0, 0);
+		draw_straight(mlx, win, ptrs);
+		ptrs.x++;
+	}
 }

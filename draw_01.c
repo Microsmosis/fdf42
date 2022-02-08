@@ -6,23 +6,26 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:14:23 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 18:55:14 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:37:55 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
 
-t_inits	draw_map(void *mlx, void *win, t_inits ptrs)
+void	draw_map(void *mlx, void *win, t_inits ptrs)
 {
 	ptrs.y = 0;
 	ptrs.x = 0;
 	ptrs.x_temp = 0;
 	ptrs.height = ptrs.size;
 	ptrs.width = ptrs.size;
+	if (ptrs.rows_copy == 1 && ptrs.columns > 1)
+		straight_line(mlx, win, ptrs);
+	if (ptrs.rows_copy == 1 && ptrs.columns == 1)
+		mlx_pixel_put(mlx, win, 860, 620, ptrs.color);
 	ptrs = call_corner(mlx, win, ptrs);
 	ptrs = call_end_linex(mlx, win, ptrs);
 	ptrs = call_end_liney(mlx, win, ptrs);
-	return (ptrs);
 }
 
 t_inits	call_corner(void *mlx, void *win, t_inits ptrs)

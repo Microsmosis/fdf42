@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 16:42:38 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 17:19:29 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:43:43 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,16 @@ int	func(int keycode, t_inits *ptrs)
 	{
 		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
 		ptrs->projection = 0;
+		ptrs->offsety = 320;
+		ptrs->offsetx = 860;
 		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, *ptrs);
 	}
 	if (keycode == 19)
 	{
 		mlx_clear_window(ptrs->mlx_ptr, ptrs->win_ptr);
 		ptrs->projection = 1;
+		ptrs->offsety = -100;
+		ptrs->offsetx = 900;
 		draw_map(ptrs->mlx_ptr, ptrs->win_ptr, *ptrs);
 	}
 	else

@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/04 14:58:33 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 18:40:31 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:40:14 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,7 @@ typedef struct s_init_p
 	int		offsetx;
 	int		offsety;
 	int		rows;
+	int		rows_copy;
 	int		columns;
 }				t_inits;
 
@@ -71,10 +72,12 @@ t_inits	call_end_linex(void *mlx, void *win, t_inits ptrs);
 t_inits	call_end_liney(void *mlx, void *win, t_inits ptrs);
 void	draw_end_linex(void *mlx, void *win, t_inits ptrs);
 void	draw_end_liney(void *mlx, void *win, t_inits ptrs);
-t_inits	draw_map(void *mlx, void *win, t_inits ptrs);
+void	draw_map(void *mlx, void *win, t_inits ptrs);
 t_inits	call_corner(void *mlx, void *win, t_inits ptrs);
 void	draw_corner(void *mlx, void *win, t_inits ptrs);
 int		draw_line(void *mlx, void *win, t_inits ptrs);
+void	straight_line(void *mlx, void *win, t_inits ptrs);
+void	draw_straight(void *mlx, void *win, t_inits ptrs);
 t_inits	main_init(t_inits ptrs);
 void	start_mlx(t_inits ptrs);
 void	error_exit(int i);

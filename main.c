@@ -6,11 +6,17 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:09:25 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 18:39:48 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:41:25 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fdf.h"
+
+void	draw_straight(void *mlx, void *win, t_inits ptrs)
+{
+	ptrs = initializer_ints(ptrs);
+	draw_line(mlx, win, ptrs);
+}
 
 t_inits	main_init(t_inits ptrs)
 {
@@ -28,7 +34,7 @@ void	start_mlx(t_inits ptrs)
 {
 	ptrs.mlx_ptr = mlx_init();
 	ptrs.win_ptr = mlx_new_window(ptrs.mlx_ptr, 1720, 1240, "mlx hive");
-	ptrs = draw_map(ptrs.mlx_ptr, ptrs.win_ptr, ptrs);
+	draw_map(ptrs.mlx_ptr, ptrs.win_ptr, ptrs);
 	mlx_key_hook(ptrs.win_ptr, &func, &ptrs);
 	mlx_loop(ptrs.mlx_ptr);
 }

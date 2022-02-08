@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/02/07 10:20:01 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/02/08 18:43:27 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:08:44 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,9 +78,10 @@ t_inits	row_count(int fd, t_inits ptrs)
 	}
 	free (line);
 	if (ptrs.rows == 0)
-		error_exit(2);
+		error_exit (2);
 	ptrs.columns = ptrs.columns - (ptrs.columns / 2);
 	close (fd);
+	ptrs.rows_copy = ptrs.rows;
 	return (ptrs);
 }
 

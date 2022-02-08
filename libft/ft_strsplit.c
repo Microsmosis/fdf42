@@ -6,7 +6,7 @@
 /*   By: llonnrot <llonnrot@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/12 14:35:08 by llonnrot          #+#    #+#             */
-/*   Updated: 2022/01/25 17:34:58 by llonnrot         ###   ########.fr       */
+/*   Updated: 2022/02/08 19:01:47 by llonnrot         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,28 +126,3 @@ char	**ft_strsplit(char const *s, char c)
 	twod = ft_assignchar(s, twod, c, asi);
 	return (twod);
 }
-/* 
-#include <stdio.h>
-
-int	main(void)
-{
-	int	i;
-	int	i2;
-	i = 0;
-	i2 = 0;
-	char **newarr;
-	newarr = ft_strsplit("********", '*');
-	while (newarr[i])
-	{
-		while(newarr[i][i2])
-		{
-			printf("%c\n", newarr[i][i2]);
-			i2++;
-		}
-		printf("\n");
-		i2 = 0;
-		i++;
-	}
-	return (0);
-}
- */
